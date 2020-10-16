@@ -1,6 +1,6 @@
 import quandl
 import pandas as pd
-quandl.ApiConfig.api_key = "zARNHNKS12q_GPVDLJjM"
+quandl.ApiConfig.api_key  = ""
 
 
 # Get Data for adjusted close in 2017
