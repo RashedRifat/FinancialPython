@@ -1,5 +1,4 @@
 # MultipleLinearRegression
-
 import numpy as np
 import pandas as pd
 import quandl
@@ -35,6 +34,3 @@ df.columns = ["AAPL", "AMZN", "MSFT", "WMT", "EBAY"]
 # Create Stats Model 
 model = sm.ols(formula="AAPL ~ AMZN + MSFT + WMT + EBAY", data=df).fit()
 print(model.summary())
-
-# 
-
