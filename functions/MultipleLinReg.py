@@ -57,4 +57,5 @@ def main(symbols, year="2016"):
     model = make_model(log_returns)
     print(model.summary())
 
-main(["aapl", "msft", "ebay"])
+# See use case with AAPL, MSFT and EBAY from year 2016 to 2018    
+# main(["aapl", "msft", "ebay"])
