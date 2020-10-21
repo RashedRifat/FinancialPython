@@ -42,11 +42,32 @@ def get_returns(value_table, deviation=3):
     df.columns = keys
     return df
 
+# Create and return a OLS model
+def make_model(dataframe):
+    tickers = dataframe.columns
+    formulae = str(tickers[0] + "~" + tickers[1])
+    model = sm.ols(formula=formulae, data=dataframe).fit()
+    return model
+
+# Return a visulization 
+def make_scatterplot(dataframe, figsize=(15,20)):
+    model = make_model(dataframe)
+    plt.figure(0, figsize=figsize)
+    plt.scatter(dataframe[dataframe.columns[0]], dataframe[dataframe.columns[1]])
+    plt.xlabel(str(dataframe.columns[0] + " Returns"))
+    plt.ylabel(str(dataframe.columns[1] + " Returns"))
+    plt.title("Return Association Graph")
+    #plt.plot(dataframe[dataframe.columns[0]], model.predict(), color="red")
+    plt.show()  
+
 
 # Main Class for testing 
 def main():
     tickers = ["AAPL", "MSFT"]
     value_dict = get_data(tickers)
-    print(get_returns(value_dict))
+    dataframe = get_returns(value_dict)
+    model = make_model(dataframe)
+    print(model.summary())
+    make_scatterplot(dataframe)
 
 main()
