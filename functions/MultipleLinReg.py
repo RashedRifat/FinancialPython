@@ -14,7 +14,10 @@ def get_prices(symbols):
     symbols = [x.strip().upper() for x in symbols]
     tables = dict()
     for sym in symbols:
-        tables[sym] = quandl.get(str("WIKI/" + sym))
+        try:
+            tables[sym] = quandl.get(str("WIKI/" + sym))
+        except:
+            raise ValueError(str(sym + " is not in the WIKI Database."))
     
     return tables
 
