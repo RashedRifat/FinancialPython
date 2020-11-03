@@ -1,15 +1,16 @@
 # Testing the Alpaca API
 import alpaca_trade_api as tradeapi
 import pandas as pd 
+import tools
 
 # Set up API
-api = tradeapi.REST("PKK0OEAG0UQRP9KN9IYD", "NXkfAhVf8kGluaXMji73RiaAuyzLQzc3ykhcUBHR", base_url='https://paper-api.alpaca.markets') # or use ENV Vars shown below
+api = tradeapi.REST("hidden", "hidden", base_url='https://paper-api.alpaca.markets') # or use ENV Vars shown below
 account = api.get_account()
 
 def check_for_data(stocks, start, end):
     '''Checks if stock data is already in the data file.'''
 
-    f = open("runs.txt", "a+")
+    f = open("bin\\runs.txt", "a+")
     f.seek(0)
     lines = f.readlines()
     returnStocks = list()
@@ -59,7 +60,7 @@ def make_data_csv(stocks=["AAPL", "MSFT"], start="2020-10-01", end="2020-10-31",
     # Save Data    
     while (start_index < stop_index):
         stock_data = data[data.columns[start_index:end_index]]
-        filename = "data\\" + stocks[0].lower() + "_data.csv"
+        filename = "bin\\data\\" + stocks[0].lower() + "_data.csv"
         stocks.pop(0)
         stock_data.to_csv(filename)
         start_index += 5
@@ -73,7 +74,7 @@ def get_data(stocks=["AAPL"]):
 
     stock_dict = dict()
     for stock in stocks:
-        stock = stock.lower()
+        stock = stock.upper()
         filename = "data\\" + stock + "_data.csv"
         stock_data = pd.read_csv(filename).dropna()
         columns = ["date", stock + "_open", stock + "_high", stock + "_low", stock + "_close", stock + "_volume"]
@@ -87,6 +88,8 @@ def run(stocks, start, end):
     '''Psudo Main Class for running the File'''
     make_data_csv(stocks, start, end)
     stock_dict = get_data(stocks)
+    AAPL = stock_dict["AAPL"]
+    
 
 # Test Methods
 run(stocks=["AAPL", "MSFT", "TSLA"], start="2020-10-01", end="2020-10-31")
