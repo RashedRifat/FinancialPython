@@ -16,12 +16,17 @@ def get_MA(stock, data, n, method=None):
     '''Calculates the MACD for a stock'''
 
     # Basic Error Checking
+    if not isinstance(stock, str):
+        raise TypeError(stock, " must be a string!")
+    if not isinstance(method, str):
+        raise TypeError(method, " must be a string!")
+    if not isinstance(data, pd.DataFrame):
+        raise TypeError("data must be a dataframe!")
+
     method = method.strip().lower() 
     stock = stock.strip().upper()
     methods = ["high", "low", "close", "open", "average"]
-    if not isinstance(data, pd.DataFrame):
-        raise ValueError("data must be a dataframe!")
-    if method not in methods or method == False:
+    if method not in methods:
         raise ValueError("method must be in ", methods)
     
     # If avergae, create avergae data
@@ -48,3 +53,18 @@ def get_MACD(stock, data, n=[12, 26], method=None):
 def get_MACD_Signal(stock, data, n=[12, 26], method=None):
     macd = get_MACD(stock, data, n, method)
     return macd.ewm(span=n[0], adjust=False).mean()
+
+def get_SuperTrend(stock, data):
+    return None 
+
+def get_ValueZone():
+    return None
+
+def get_ADX():
+    return None
+
+def get_LongImpulse():
+    return None
+
+def get_ShortImpulse():
+    return None
