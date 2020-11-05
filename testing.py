@@ -1,12 +1,16 @@
 # Testing playground for new functions 
 import pandas as pd
 from utils import get_data
+from tools import get_SuperTrend
+import tools
 
-stock = "GOOG"
-data = get_data(stocks=["GOOG"])["GOOG"]
 
 def st(stock, data):
     '''Calculates the Supertrend tool for a stock'''
+
+    old_columns = data.columns.tolist()
+    old_columns.append("ST")
+    old_columns.append( "ST_SIGNAL")
 
     data.columns = ["Date", "Open", "High", "Low", "Close", "Volume"]
     data.reset_index(drop=True, inplace=True)
@@ -97,8 +101,13 @@ def st(stock, data):
             data.loc[i,"ST_BUY_SELL"]="BUY"
         else:
             data.loc[i,"ST_BUY_SELL"]="SELL"
-      
+
+    data = data[["Date", "Open", "High", "Low", "Close", "Volume", "ST", "ST_BUY_SELL"]] 
+    data.columns = old_columns 
     return data
 
 
-print(st(stock, data))
+#print(get_SuperTrend(stock, data))
+stock = "GOOG"
+data = get_data(stocks=["GOOG"], timeframe="minute")["GOOG"]
+print(tools.get_ValueZone(stock="GOOG", data=data, method="Average"))

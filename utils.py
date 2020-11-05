@@ -179,10 +179,13 @@ def run(stocks, start, end, reset=False, timeframe="day"):
     '''Pesudo Main Class for running the File'''
     make_data_csv(stocks, start, end, reset=reset, timeframe=timeframe)
     stock_dict = get_data(stocks, timeframe)
-    AAPL = stock_dict["VYM"]
-    tools.get_MACD(stock="VYM", data=AAPL, n=[1,2], method="average")
-    
+    GOOG = stock_dict["GOOG"]
+    ans3 = tools.get_ValueZone(stock="GOOG", data=GOOG, method="average", n=[2,5])
+    ans2 = tools.get_MACD(stock="GOOG", data=stock_dict["GOOG"], n=[1,2], method="average")
+    ans1 = tools.get_SuperTrend(stock="GOOG", data=GOOG)
+    print(ans3.head())
+    exit()
 
 # Test Methods
-run(stocks=["VYM", "GOOG", "T"], start="2020-10-01", end="2020-10-31", reset=False, timeframe="1D")
+run(stocks=["GOOG"], start="2020-9-01", end="2020-11-4", reset=False, timeframe="day")
 #run(stocks=["AAPL", "MSFT", "TSLA"], start="2020-10-01", end="2020-10-31")
