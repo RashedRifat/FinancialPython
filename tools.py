@@ -1,5 +1,6 @@
 # File of Finacial Instruments To Be Used
 import pandas as pd
+import numpy as np
 
 
 def get_MA(stock, data, n, method=None):
@@ -28,7 +29,7 @@ def get_MA(stock, data, n, method=None):
     data = data.copy(deep=True)
     stock = stock.strip().upper()
     method = method.strip().lower() 
-    methods = ["high", "low", "close", "open", "average"]
+    methods = ["high", "low", "close", "open", "average", "volume"]
     if method not in methods:
         raise ValueError("method must be in ", methods)
     
@@ -224,13 +225,13 @@ def get_ValueZone(stock, data, method="average", n=[9,50]):
     if n[0] > n[1]:
         raise ValueError("n must in sorted ascending order!")
 
+    new_data = data.copy(deep=True)
     method = method.strip().lower() 
     methods = ["high", "low", "close", "open", "average"]
     if method not in methods:
         raise ValueError("method must be in ", methods)
     
     # If avergae, create average data
-    new_data = data.copy(deep=True)
     price_name = stock + "_" + method
     if method == "average":
         new_data[price_name] = (new_data[stock + "_high"].apply(float) + new_data[stock + "_low"].apply(float)) / 2.0
@@ -263,11 +264,68 @@ def get_ValueZone(stock, data, method="average", n=[9,50]):
     new_data = new_data[["upper", "lower", "value_zone"]]
     return new_data
 
+def get_Impulse(stock, data, n, method=None, lookback=3):
+    '''Calculates the Impulse for the stock. The Impulse is determined by looking if the current stock 
+        price is greater than or equal to the Moving Average defined in method for lookback days. The 
+        Moving Average is determined by the method and the n days. 
+
+    Args:
+        stock (str): name of stock to be analyzed
+        data (Pandas.DataFrame): dataframe of the stock containing data to be analyzed 
+        n (int): the number of days for the rolling Moving Average
+        method (str): the value by which to calculate MA for (ex: by closing price, daily low, etc)
+        lookback (int): the number of days to look back at for creating the Impulse
+
+    Returns:
+        impluse (Pandas.DataFrame): the calculated Impulse 
+    '''
+
+    # Basic Error Checking 
+    if not isinstance(stock, str) or not stock:
+        raise TypeError("stock must be of type str!")
+    if not isinstance(data, pd.DataFrame) or data.empty:
+        raise TypeError("data must be an non-empty Pandas.DataFrame!")
+    if not isinstance(lookback, int) or lookback > 5 or lookback <= 0:
+        raise TypeError("lookback must be an int less than 5 and greater than 0!")
+    if not isinstance(method, str):
+        raise TypeError("method must be an str = equal to [high, low, close, open, average]")
+
+    data = data.copy(deep=True)
+    stock = stock.strip().upper()
+    method = method.strip().lower() 
+    methods = ["high", "low", "close", "open", "average"]
+    if method not in methods:
+        raise ValueError("method must be in ", methods)
+
+    # If avergae, create avergae data
+    price_name = stock + "_" + method
+    if method == "average":
+        data[price_name] = (data[stock + "_high"].apply(float) + data[stock + "_low"].apply(float)) / 2.0
+    data[price_name] = data[price_name].apply(float) / 1.0
+    data["MA"] = get_MA(stock, data, n=n, method=method)
+    data["Impulse"] = np.nan
+    
+    # Iterate through the rows and calculate the Long Impulse 
+    for i, row in data.iterrows():
+        if i <= lookback+1:
+            continue
+
+        # Calculate the number of times the price_name is greater than the MACD
+        numGreater = 0
+        for min in range(1, lookback+1):
+            if data.loc[i, price_name] >= data.loc[i-min, price_name]:
+                numGreater += 1
+            else:
+                pass
+        if numGreater == lookback:
+            data.loc[i, "Impulse"] = 2
+        elif numGreater == 0:
+            data.loc[i, "Impulse"] = 0
+        else:
+            data.loc[i, "Impulse"] = 1
+    
+    return data["Impulse"]
+
+
 def get_ADX():
-    return None
-
-def get_LongImpulse():
-    return None
-
-def get_ShortImpulse():
     return None

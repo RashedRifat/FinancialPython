@@ -176,16 +176,17 @@ def get_data(stocks, timeframe):
 
 
 def run(stocks, start, end, reset=False, timeframe="day"):
-    '''Pesudo Main Class for running the File'''
+    '''Pesudo Main Class for testing programs'''
+
     make_data_csv(stocks, start, end, reset=reset, timeframe=timeframe)
     stock_dict = get_data(stocks, timeframe)
-    GOOG = stock_dict["GOOG"]
-    ans3 = tools.get_ValueZone(stock="GOOG", data=GOOG, method="average", n=[2,5])
-    ans2 = tools.get_MACD(stock="GOOG", data=stock_dict["GOOG"], n=[1,2], method="average")
-    ans1 = tools.get_SuperTrend(stock="GOOG", data=GOOG)
-    print(ans3.head())
+    GOOG_data = stock_dict["GOOG"]
+    value_zone = tools.get_ValueZone(stock="GOOG", data=GOOG_data, method="average", n=[2,5])
+    MACD = tools.get_MACD(stock="GOOG", data=GOOG_data, n=[1,2], method="average")
+    supertrend = tools.get_SuperTrend(stock="GOOG", data=GOOG_data)
+    print(GOOG_data.head())
     exit()
 
 # Test Methods
-run(stocks=["GOOG"], start="2020-9-01", end="2020-11-4", reset=False, timeframe="day")
+#run(stocks=["GOOG", "AAPL", "MSFT", "TSLA"], start="2020-9-01", end="2020-11-4", reset=True, timeframe="day")
 #run(stocks=["AAPL", "MSFT", "TSLA"], start="2020-10-01", end="2020-10-31")
