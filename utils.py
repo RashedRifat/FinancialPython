@@ -2,15 +2,31 @@
 import alpaca_trade_api as tradeapi
 import pandas as pd 
 import os 
-#import tqdm 
 import tools
 
 # Set up API and check to see that it is working 
-api = tradeapi.REST("hidden", "hidden", base_url='https://paper-api.alpaca.markets') # or use ENV Vars shown below
-try:
-    account = api.get_account()
-except Exception:
-    raise ConnectionError("Unable to get account for keys.")
+def set_API(ID=None, key=None, paperMode=True, ask=False):
+    
+    if ID == None or key == None:
+        ask = True
+    if ask:
+        ID = str(input("Enter Alpaca Account ID: "))
+        key = str(input("Enter Alpaca Account Key: "))
+
+    url = ""
+    if paperMode:
+        url = 'https://paper-api.alpaca.markets'
+    else:
+        raise ConnectionRefusedError("Live mode not Enabled!")
+
+    api = tradeapi.REST(ID, key, base_url=url) # or use ENV Vars shown below
+    try:
+        account = api.get_account()
+    except Exception:
+        raise ConnectionError("Unable to get account for keys.")
+    
+    return api
+
 
 def check_for_data(stocks, start, end, timeframe):
     '''Checks if stock data is already in the data directory by using the runs.txt file.
@@ -58,7 +74,7 @@ def check_for_data(stocks, start, end, timeframe):
     return returnStocks
 
 
-def make_data_csv(stocks=["AAPL", "MSFT"], start="2020-10-01", end="2020-10-31", timeframe="day", reset=False):
+def make_data_csv(stocks, start, end, api=None, timeframe="day", reset=False):
     '''Find data for the specificed stocks and create csv's in the data directory
     
     Args:
@@ -72,7 +88,10 @@ def make_data_csv(stocks=["AAPL", "MSFT"], start="2020-10-01", end="2020-10-31",
     Returns:
         None
     '''
-
+    if api == None:
+        api = set_API(ask=True)
+    else:
+        pass
     timeframe_list = ["minute", "1Min", "5Min", "15Min", "day", "1D"]
     # Basic Error Checking
     if not isinstance(stocks, list):
@@ -186,7 +205,3 @@ def run(stocks, start, end, reset=False, timeframe="day"):
     supertrend = tools.get_SuperTrend(stock="GOOG", data=GOOG_data)
     print(GOOG_data.head())
     exit()
-
-# Test Methods
-#run(stocks=["GOOG", "AAPL", "MSFT", "TSLA"], start="2020-9-01", end="2020-11-4", reset=True, timeframe="day")
-#run(stocks=["AAPL", "MSFT", "TSLA"], start="2020-10-01", end="2020-10-31")

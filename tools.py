@@ -1,7 +1,48 @@
 # File of Finacial Instruments To Be Used
 import pandas as pd
 import numpy as np
+import ta
 
+def get_lookback(stock, data, lookback, compareVal, outputVal):
+
+    if not isinstance(stock, str) or not stock:
+        raise TypeError("stock must be a nonempty string!")
+    if not isinstance(data, pd.DataFrame) or data.empty:
+        raise TypeError("data must be non-empty Pandas.DataFrame!")
+    if not isinstance(lookback, int) or lookback <= 0:
+        raise TypeError("lookback must be of type int and greater than 0")
+    if not isinstance(compareVal, str) or not compareVal:
+        raise TypeError("comapreVal should be a non-empty string!")
+    if compareVal not in data.columns:
+        raise AttributeError("compareVal not within the supplied data!")
+    if not isinstance(outputVal, str) or not outputVal:
+        raise TypeError("outputVal is must be a non-empty string!")
+    if outputVal in data.columns:
+        raise AttributeError("data already has the supplied outputVal!")
+
+    outputVal = str(outputVal)
+    data = data.copy(deep=True)
+    data[outputVal] = np.nan
+
+    for i, row in data.iterrows():
+        if i <= lookback+1:
+            continue
+
+        # Calculate the number of times the price_name is greater than the MACD
+        numGreater = 0
+        for min in range(1, lookback+1):
+            if data.loc[i, compareVal] >= data.loc[i-min, compareVal] and data.loc[i-min, compareVal] != 0:
+                numGreater += 1
+            else:
+                pass
+        if numGreater == lookback:
+            data.loc[i, outputVal] = 2
+        elif numGreater == 0:
+            data.loc[i, outputVal] = 0
+        else:
+            data.loc[i, outputVal] = 1
+    
+    return data[outputVal]
 
 def get_MA(stock, data, n, method=None):
     '''Calculates the moving average for a stock
@@ -46,7 +87,7 @@ def get_MA(stock, data, n, method=None):
     ma = prices.ewm(span=n, adjust=False).mean()
     return ma
 
-def get_MACD(stock, data, n=[12, 26], method=None):
+def get_MACD(stock, data, n=[12, 26], method=None, lookback=3):
     '''Calculates the MACD for a stock
     
     Args: 
@@ -54,18 +95,23 @@ def get_MACD(stock, data, n=[12, 26], method=None):
         data (Pandas.DataFrame): data frame object containing data for stock 
         n (list): list of days for which to calculate MACD for 
         method (str): value by which to calculate MACD for (ex: by closing price, daily low, etc)
-    
+        lookback (int): days for which to compare MACD's for
+
     Returns:
         macd: a pands Series for the MACD of the stock 
     '''
    
     if not isinstance(n, list) or len(n) != 2:
         raise TypeError("n must be a list of two days (spans)")
+    if not isinstance(lookback, int) or lookback <= 0:
+        raise TypeError("lookback must be of type int and greater than 0!")
     
-    macd_1 = get_MA(stock, data, n[0], method)
-    macd_2 = get_MA(stock, data, n[1], method)
-    macd = macd_1 - macd_2
-    return macd
+    ma1 = get_MA(stock, data, n[0], method)
+    ma2 = get_MA(stock, data, n[1], method)
+    macd = ma1 - ma2
+    data["MACD"] = macd
+    data["MACD_Signal"] = get_lookback(stock=stock, data=data, lookback=lookback, compareVal="MACD", outputVal="MACD_Signal")
+    return data[["MACD", "MACD_Signal"]]
 
 def get_MACD_Signal(stock, data, n=[12, 26], method=None):
     '''Calculates the MACD Signal line from a stock
@@ -197,8 +243,7 @@ def get_SuperTrend(stock, data):
             data.loc[i,"ST_BUY_SELL"]="SELL"
    
     data = data[["Date", "Open", "High", "Low", "Close", "Volume", "ST", "ST_BUY_SELL"]] 
-    data.columns = old_columns 
-    return data
+    return data[["ST", "ST_BUY_SELL"]]
     
 def get_ValueZone(stock, data, method="average", n=[9,50]):
     '''Calculates if the stock is within the value zone. The value zone is defined as the difference between 
@@ -261,7 +306,7 @@ def get_ValueZone(stock, data, method="average", n=[9,50]):
         else:
             new_data.loc[i, "value_zone"] = "0"
     
-    new_data = new_data[["upper", "lower", "value_zone"]]
+    new_data = new_data["value_zone"]
     return new_data
 
 def get_Impulse(stock, data, n, method=None, lookback=3):
@@ -303,29 +348,29 @@ def get_Impulse(stock, data, n, method=None, lookback=3):
         data[price_name] = (data[stock + "_high"].apply(float) + data[stock + "_low"].apply(float)) / 2.0
     data[price_name] = data[price_name].apply(float) / 1.0
     data["MA"] = get_MA(stock, data, n=n, method=method)
-    data["Impulse"] = np.nan
+    data["Impulse"] = get_lookback(stock=stock, data=data, lookback=lookback, compareVal="MA", outputVal="Impulse")    
+    return data[["MA","Impulse"]]
+
+
+def get_ADX(stock, data, n=14, lookback=3):
     
-    # Iterate through the rows and calculate the Long Impulse 
-    for i, row in data.iterrows():
-        if i <= lookback+1:
-            continue
+    # Basic Error Checking 
+    if not isinstance(stock, str) or not stock:
+        raise TypeError("stock must be of type str!")
+    stock = stock.upper()
+    if not isinstance(data, pd.DataFrame) or data.empty:
+        raise TypeError("data must be of type Pandas.DataFrame!")
+    if not isinstance(n, int) or n <= 0:
+        raise TypeError("n should be an int greater than 0!")
+    if not isinstance(lookback, int) or lookback <= 0:
+        raise TypeError("lookback should be an int greater than 0!")
 
-        # Calculate the number of times the price_name is greater than the MACD
-        numGreater = 0
-        for min in range(1, lookback+1):
-            if data.loc[i, price_name] >= data.loc[i-min, price_name]:
-                numGreater += 1
-            else:
-                pass
-        if numGreater == lookback:
-            data.loc[i, "Impulse"] = 2
-        elif numGreater == 0:
-            data.loc[i, "Impulse"] = 0
-        else:
-            data.loc[i, "Impulse"] = 1
-    
-    return data["Impulse"]
+    data = data.copy(deep=True)
+    data.drop(["date"], axis=1, inplace=True)
+    data.columns = ["open", "high", "low", "close", "volume"]
+    for col in data.columns:
+        data[col] = data[col].apply(float)
+    data["ADX"] = ta.trend.ADXIndicator(high=data["high"], low=data["low"], close=data["close"], n=n).adx()
+    data["ADX_val"] = get_lookback(stock=stock, data=data, lookback=lookback, compareVal="ADX", outputVal="adx_val")
 
-
-def get_ADX():
-    return None
+    return data[["ADX", "ADX_val"]]
