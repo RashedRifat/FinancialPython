@@ -106,6 +106,7 @@ def get_MACD(stock, data, n=[12, 26], method=None, lookback=3):
     if not isinstance(lookback, int) or lookback <= 0:
         raise TypeError("lookback must be of type int and greater than 0!")
     
+    data = data.copy(deep=True)
     ma1 = get_MA(stock, data, n[0], method)
     ma2 = get_MA(stock, data, n[1], method)
     macd = ma1 - ma2
@@ -253,7 +254,7 @@ def get_ValueZone(stock, data, method="average", n=[9,50]):
             stock (str): name of stock to be evaluated 
             data (pd.DataFrame): dataframe of stock data 
             method (str): value by which to calculate valueZone for (ex: by closing price, daily low, etc)
-            n (list): list of length 2 of days to calculate valueZone by 
+            n (list): list of length 2 of days to calculate valueZone by looking at those MA's
 
        Retruns:
             new_data (Pandas.DataFrame): dataframe containing upper and lower bounds of the Value Zone as well as 
@@ -370,7 +371,19 @@ def get_ADX(stock, data, n=14, lookback=3):
     data.columns = ["open", "high", "low", "close", "volume"]
     for col in data.columns:
         data[col] = data[col].apply(float)
-    data["ADX"] = ta.trend.ADXIndicator(high=data["high"], low=data["low"], close=data["close"], n=n).adx()
+    try:
+        data["ADX"] = ta.trend.ADXIndicator(high=data["high"], low=data["low"], close=data["close"], n=n).adx()
+    except:
+        raise ValueError("ta.trend failed to properply load. Try using a lower n.")
+    
     data["ADX_val"] = get_lookback(stock=stock, data=data, lookback=lookback, compareVal="ADX", outputVal="adx_val")
 
     return data[["ADX", "ADX_val"]]
+
+def make_average(stock, data):
+    if not isinstance(data, pd.DataFrame) or data.empty:
+        raise ValueError("data should be a non-empty pd.Dataframe")
+    
+    data = data.copy(deep=True)
+    data[stock + "_average"] = (data[stock + "_high"].apply(float) + data[stock + "_low"].apply(float)) / 2.0
+    return data

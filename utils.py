@@ -3,10 +3,10 @@ import alpaca_trade_api as tradeapi
 import pandas as pd 
 import os 
 import tools
+import tqdm
 
 # Set up API and check to see that it is working 
 def set_API(ID=None, key=None, paperMode=True, ask=False):
-    
     if ID == None or key == None:
         ask = True
     if ask:
@@ -194,14 +194,47 @@ def get_data(stocks, timeframe):
     return stock_dict
 
 
-def run(stocks, start, end, reset=False, timeframe="day"):
+def analyze(stocks, start, end, api=None, impulseN=[9,50], lookback=3, valueZoneN=[2,5], 
+                    MACDN=[1,2], ADXN=14, reset=False, timeframe="day", progress_bar=True):
     '''Pesudo Main Class for testing programs'''
 
-    make_data_csv(stocks, start, end, reset=reset, timeframe=timeframe)
+    # Create data and dictonaries 
+    make_data_csv(stocks, start, end, api=api, reset=reset, timeframe=timeframe)
     stock_dict = get_data(stocks, timeframe)
-    GOOG_data = stock_dict["GOOG"]
-    value_zone = tools.get_ValueZone(stock="GOOG", data=GOOG_data, method="average", n=[2,5])
-    MACD = tools.get_MACD(stock="GOOG", data=GOOG_data, n=[1,2], method="average")
-    supertrend = tools.get_SuperTrend(stock="GOOG", data=GOOG_data)
-    print(GOOG_data.head())
-    exit()
+    keys = stock_dict.keys()
+    progress_bar = not(progress_bar)
+    analyzed = dict()
+
+    # For each stock, create a new signal table
+    for key in tqdm.tqdm(keys, ncols=100, desc=("Analyzing"), disable=progress_bar):
+        data = stock_dict[key]
+        to_analyze = pd.DataFrame()
+
+        # Transform data for analysis
+        value_zone = tools.get_ValueZone(stock=key, data=data, method="average", n=valueZoneN)
+        MACD = tools.get_MACD(stock=key, data=data, n=MACDN, method="average")
+        supertrend = tools.get_SuperTrend(stock=key, data=data)
+        shortImpulse = tools.get_Impulse(stock=key, data=data, n=impulseN[0], method="average", lookback=lookback)
+        longImpulse = tools.get_Impulse(stock=key, data=data, n=impulseN[1], method="average", lookback=lookback)
+        ADX = tools.get_ADX(stock=key, data=data, n=10, lookback=lookback)
+
+        # Assign transformed data
+        to_analyze[key + "_date"] = data["date"]
+        to_analyze[key + "_average"] = tools.make_average(key, data)[key + "_average"]
+        to_analyze[key + "_MACD"] = MACD["MACD"].apply(float)
+        to_analyze[key + "_LongImp"] = longImpulse["Impulse"].apply(float)
+        to_analyze[key + "_ShortImp"] = shortImpulse["Impulse"].apply(float)
+        to_analyze[key + "_MACD_Signal"] = MACD["MACD_Signal"].apply(float)
+        to_analyze[key + "_value_zone"] = value_zone.apply(float)
+        to_analyze[key + "_ST"] = supertrend["ST"].apply(float)
+        to_analyze[key + "_ST_BUYSELL"] = supertrend["ST_BUY_SELL"]
+        to_analyze[key + "_ADX_val"] = ADX["ADX_val"].apply(float)
+        to_analyze[key + "_FINAL_SIGNAL"] = to_analyze[key + "_LongImp"] + to_analyze[key + "_ShortImp"] + to_analyze[key + "_MACD_Signal"]
+        to_analyze[key + "_FINAL_SIGNAL"] += to_analyze[key + "_value_zone"] + to_analyze[key + "_ADX_val"]
+        #to_analyze.dropna(inplace=True)
+        analyzed[key] = to_analyze
+    
+    return analyzed
+
+#api = set_API(ID="PKTCO6SLSQRIGROJLNHR", key="4z0sJl647VMSqM4FoLbfelMjDhy3aigz6OXlKor9")
+#print(analyze(["AAPL", "GOOG", "MSFT", "TSLA"], "2020-10-01", "2020-10-31", api=api, reset=False, timeframe="day", progress_bar=True))

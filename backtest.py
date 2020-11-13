@@ -41,15 +41,11 @@ class order():
         
 
 class backtest():
-    def __init__(self, stock, start, end):
-        self.api = utils.set_API(ask=True)
+    def __init__(self, stock, start, end, api=None):
         self.stock = stock
         self.start = start
         self.end = end
 
-    def funcname(self, parameter_list):
-        return None
+    # Complete Analyze function in utils 
+    # Write backtest for stocks 
 
-
-
-print(order(1, "AAPL", "2020-09-10", 10.11, 15.11, 9.11))
