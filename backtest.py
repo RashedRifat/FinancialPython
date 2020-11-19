@@ -26,7 +26,7 @@ class order():
         endArray = endDate.split(" ")[0].split("-")
         self.endDate = dt.datetime(int(endArray[0]), int(endArray[1]), int(endArray[2]))
         self.soldPrice = float(soldPrice)
-        self.profit = float(self.buyPrice - self.soldPrice)
+        self.profit = float(self.soldPrice - self.buyPrice)
         self.profitPercent = float(self.profit / self.buyPrice) * 100 
 
     def __str__(self):
@@ -51,7 +51,7 @@ class backtest():
         self.totalProfit = dict()
         self.capital = 0
     
-    def begin(self, risk, profit, capital=500, threshold=7):
+    def begin(self, risk, profit, capital=500, threshold=7, testing=False):
 
         print("\n\nBegin Testing...")
         self.capital = capital
@@ -92,6 +92,9 @@ class backtest():
                     current_order = newOrder
                     self.id_counter += 1
                     capital -= price
+                    if testing:
+                        print("Bought 1 stock at ", current_order.buyPrice)
+                        print("Profit: ", trade_profit, "Capital: ", capital, "\n") 
                     continue
                 
                 # Check and sell if price falls below stopPrice
@@ -103,7 +106,11 @@ class backtest():
                         max_drawdown = current_order.profit
                     all_orders.append(current_order)
                     capital += current_order.soldPrice
+                    if testing:
+                        print("Sold 1 stock due to stopLoss at ", current_order.soldPrice)
+                        print("Profit: ", trade_profit, "Capital: ", capital, "\n") 
                     current_order = None
+                    continue
             
 
                 # Check and sell if price rises above profitPrice 
@@ -116,7 +123,11 @@ class backtest():
 
                     capital += current_order.profit
                     all_orders.append(current_order)
+                    if testing:
+                        print("Sold 1 stock due to ProfitExit at ", current_order.soldPrice)
+                        print("Profit: ", trade_profit, "Capital: ", capital, "\n") 
                     current_order = None
+                    continue
                 
 
                 # Check and sell if signal falls below threshold 
@@ -131,21 +142,23 @@ class backtest():
 
                     all_orders.append(current_order)
                     capital += current_order.soldPrice
+                    if testing:
+                        print("Sold 1 stock due to siganl threshold at ", current_order.soldPrice)
+                        print("Profit: ", trade_profit, "Capital: ", capital, "\n") 
                     current_order = None
-
-                print("Profit: ", trade_profit, "Capital: ", capital)  
+                    continue 
                     
             self.totalProfit[stock] = [all_orders, trade_profit, max_profit, max_drawdown]
         return self.totalProfit
 
 
-
-newTest = backtest(["GOOG"], start="2019-01-01", end="2019-12-31")
-toReturn = newTest.begin(risk=0.05, profit=0.10, threshold=6, capital=2000)
-print("\nOrders Made: ", len(toReturn["GOOG"][0]))
-print("Profit: $", round(toReturn["GOOG"][1], 2))
-print("Max Profit: $", round(toReturn["GOOG"][2], 2))
-print("Max Drawdown: $", round(toReturn["GOOG"][3], 2))
+testStock = "GOOG"
+newTest = backtest([testStock], start="2020-05-01", end="2020-11-01")
+toReturn = newTest.begin(risk=0.05, profit=0.10, threshold=7, capital=2000)
+print("\nOrders Made: ", len(toReturn[testStock][0]))
+print("Profit: $", round(toReturn[testStock][1], 2))
+print("Max Profit: $", round(toReturn[testStock][2], 2))
+print("Max Drawdown: $", round(toReturn[testStock][3], 2))
 
 # Create a backtest.set() to easily set paraeters for the analyze function 
 # Create a backtest.results() to get a readable set of results 
