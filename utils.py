@@ -194,8 +194,8 @@ def get_data(stocks, timeframe):
     return stock_dict
 
 
-def analyze(stocks, start, end, api=None, impulseN=[9,50], lookback=3, valueZoneN=[2,5], 
-                    MACDN=[1,2], ADXN=14, reset=False, timeframe="day", progress_bar=True):
+def analyze(stocks, start, end, api=None, impulseN=[15,30], lookback=3, valueZoneN=[5,10], 
+                    MACDN=[12,26], ADXN=14, reset=True, timeframe="day", progress_bar=True):
     '''Pesudo Main Class for testing programs'''
 
     # Create data and dictonaries 
@@ -231,10 +231,10 @@ def analyze(stocks, start, end, api=None, impulseN=[9,50], lookback=3, valueZone
         to_analyze[key + "_ADX_val"] = ADX["ADX_val"].apply(float)
         to_analyze[key + "_FINAL_SIGNAL"] = to_analyze[key + "_LongImp"] + to_analyze[key + "_ShortImp"] + to_analyze[key + "_MACD_Signal"]
         to_analyze[key + "_FINAL_SIGNAL"] += to_analyze[key + "_value_zone"] + to_analyze[key + "_ADX_val"]
-        #to_analyze.dropna(inplace=True)
         analyzed[key] = to_analyze
     
     return analyzed
 
 #api = set_API(ID="PKTCO6SLSQRIGROJLNHR", key="4z0sJl647VMSqM4FoLbfelMjDhy3aigz6OXlKor9")
-#print(analyze(["AAPL", "GOOG", "MSFT", "TSLA"], "2020-10-01", "2020-10-31", api=api, reset=False, timeframe="day", progress_bar=True))
+#print(analyze(["AAPL", "GOOG", "MSFT", "TSLA"], "2020-01-01", "2020-10-31", api=api, 
+#                            reset=True, timeframe="day", progress_bar=True, lookback=5))
