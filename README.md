@@ -4,12 +4,6 @@ FinancialPython uses the Alpaca Trading API to save market data and analyze rece
 
 Custom indicators have been built to aid in analysis, including commonly found indicators such as the moving average and MACD indicators. FinancialPython is highly flexible and allows for granular control of tiemframes and methods by which indicators are calculated. 
 
-## TO-DO
-* Implement ADX indicator
-* Implement LongImpulse Indicator
-* Implement ShortImpulse Indicator
-* Implement an analyze.py file 
-* Implement a backtester.py file 
 
 ## Disclaimer 
 This program or the author is not responsible for any investment failure or loss due to the use of this program. The program is provided as is, without any other warranty or support. 
