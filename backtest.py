@@ -42,7 +42,7 @@ class order():
 
 class backtest():
     def __init__(self, stocks, start, end, api=None):
-        self.api = utils.set_API(ID="PKTCO6SLSQRIGROJLNHR", key="4z0sJl647VMSqM4FoLbfelMjDhy3aigz6OXlKor9")
+        self.api = utils.set_API(ID="", key="")
         self.stocks = stocks
         self.start = start
         self.end = end
