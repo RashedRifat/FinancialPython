@@ -106,6 +106,7 @@ def get_MACD(stock, data, n=[12, 26], method=None, lookback=3):
     if not isinstance(lookback, int) or lookback <= 0:
         raise TypeError("lookback must be of type int and greater than 0!")
     
+    data = data.copy(deep=True)
     ma1 = get_MA(stock, data, n[0], method)
     ma2 = get_MA(stock, data, n[1], method)
     macd = ma1 - ma2

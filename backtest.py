@@ -47,9 +47,5 @@ class backtest():
         self.start = start
         self.end = end
 
-    def funcname(self, parameter_list):
-        return None
+    # Implement custom backtest here 
 
-
-
-print(order(1, "AAPL", "2020-09-10", 10.11, 15.11, 9.11))
