@@ -9,6 +9,7 @@ import tqdm
 def set_API(ID=None, key=None, paperMode=True, ask=False):
     if ID == None or key == None:
         ask = True
+    
     if ask:
         ID = str(input("Enter Alpaca Account ID: "))
         key = str(input("Enter Alpaca Account Key: "))
@@ -218,4 +219,13 @@ def analyze(stocks, start, end, api=None, impulseN=[15,30], lookback=3, valueZon
         longImpulse = tools.get_Impulse(stock=key, data=data, n=impulseN[1], method="average", lookback=lookback)
         ADX = tools.get_ADX(stock=key, data=data, n=10, lookback=lookback)
 
-    # Create your own function here
+        # Assign transformed data
+        to_analyze[key + "_date"] = data["date"]
+        to_analyze[key + "_average"] = tools.make_average(key, data)[key + "_average"]
+        to_analyze[key + "_MACD"] = MACD["MACD"].apply(float)
+        to_analyze[key + "_MACD_Signal"] = MACD["MACD_Signal"].apply(float)
+        to_analyze[key + "_ST"] = supertrend["ST"].apply(float)
+        to_analyze[key + "_ST_BUYSELL"] = supertrend["ST_BUY_SELL"]
+        analyzed[key] = to_analyze
+    
+    return analyzed
