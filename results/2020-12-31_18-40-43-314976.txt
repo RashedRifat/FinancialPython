@@ -1,0 +1,63 @@
+Summary of for [2020-12-31 18:40:43.314976 GMT]
+Results for: [AAPL]
+
+Summary of Trades for [AAPL]
+[----------------------------------------------------------------]
+ID:                          0
+Shares:                      1   ||   Stock:                       AAPL
+Buy Date:           06-01-2020   ||   Sell Date:             06-02-2020
+Buy Price:              319.78   ||   Sell Price:                321.19
+Stop Order:             303.79   ||   Profit Exit:               351.76
+Profit:                   1.41   ||   Profit Percent:              0.44
+
+ID:                          1
+Shares:                      1   ||   Stock:                       AAPL
+Buy Date:           06-03-2020   ||   Sell Date:             06-09-2020
+Buy Price:               324.2   ||   Sell Price:                338.81
+Stop Order:             307.99   ||   Profit Exit:               356.62
+Profit:                  14.61   ||   Profit Percent:              4.51
+
+ID:                          2
+Shares:                      1   ||   Stock:                       AAPL
+Buy Date:           06-12-2020   ||   Sell Date:             06-24-2020
+Buy Price:              342.72   ||   Sell Price:                363.65
+Stop Order:             325.58   ||   Profit Exit:               376.99
+Profit:                  20.94   ||   Profit Percent:              6.11
+
+ID:                          3
+Shares:                      1   ||   Stock:                       AAPL
+Buy Date:           07-01-2020   ||   Sell Date:             07-21-2020
+Buy Price:              365.63   ||   Sell Price:                391.99
+Stop Order:             347.35   ||   Profit Exit:                402.2
+Profit:                  26.35   ||   Profit Percent:              7.21
+
+ID:                          4
+Shares:                      1   ||   Stock:                       AAPL
+Buy Date:           07-29-2020   ||   Sell Date:             08-03-2020
+Buy Price:              377.88   ||   Sell Price:                439.06
+Stop Order:             358.99   ||   Profit Exit:               415.67
+Profit:                  61.17   ||   Profit Percent:             16.19
+
+ID:                          5
+Shares:                      1   ||   Stock:                       AAPL
+Buy Date:           08-04-2020   ||   Sell Date:             08-21-2020
+Buy Price:              438.36   ||   Sell Price:                488.24
+Stop Order:             416.44   ||   Profit Exit:               482.19
+Profit:                  49.88   ||   Profit Percent:             11.38
+
+ID:                          6
+Shares:                      1   ||   Stock:                       AAPL
+Buy Date:           08-24-2020   ||   Sell Date:             08-27-2020
+Buy Price:              505.26   ||   Sell Price:                502.63
+Stop Order:              480.0   ||   Profit Exit:               555.79
+Profit:                  -2.63   ||   Profit Percent:             -0.52
+
+ID:                          7
+Shares:                      5   ||   Stock:                       AAPL
+Buy Date:           11-12-2020   ||   Sell Date:             12-22-2020
+Buy Price:              119.55   ||   Sell Price:                132.03
+Stop Order:             113.57   ||   Profit Exit:                131.5
+Profit:                  62.39   ||   Profit Percent:             52.19
+
+[----------------------------------------------------------------]
+

@@ -1,0 +1,14 @@
+Summary of for [2020-12-31 18:40:43.314976 GMT]
+Results for: [AAPL]
+
+Summary of Trades for [AAPL]
+[----------------------------------------------------------------]
+Orders Made: 8
+P\L Ratio: 7/8 = 87.5%
+Profit Percent: 46.82%
+Profit: $234.12
+Max Profit: $62.39
+Max Drawdown: $-2.63
+Ending Balance: $734.12
+[----------------------------------------------------------------]
+

@@ -8,6 +8,7 @@ from math import floor
 
 def equals(o1, o2):
     '''Compares two string objects'''
+
     if o1 == None or o2 == None:
         raise ValueError("Expected strings, objects are null.")
     if not isinstance(o1, str):
@@ -24,7 +25,7 @@ def equals(o1, o2):
 
 class backtest():
     def __init__(self, stocks, start, end, api=None):
-        self.api = utils.set_API(ID=None, key=None)
+        self.api = utils.set_API(ID="PKKHYTOT2ZF2VUS6YK0W", key="hXwa9ugbt1FzAYXCZTmSaAxaT5xSnHqyZ2pBkoN3")
         self.stocks = stocks
         self.start = start
         self.end = end
@@ -53,6 +54,8 @@ class backtest():
     
     def check_sell(self, date, price, current_order, trade_profit, max_drawdown, all_orders, capital, max_profit, 
                                                                                             shares=1, testing=False):
+        '''Chekc to see if price excceed bracket conditions.'''
+        
         if current_order == None:
             return None
 
@@ -70,6 +73,7 @@ class backtest():
     
     def log(self):
         '''Create a set of results for a paritcular run'''
+
         today = str(dt.datetime.today())
         filename = str(today.replace(" ", "_").replace(".", "-").replace(":", "-"))
         f = open("results\\" + filename + ".txt", "w+")
@@ -192,7 +196,6 @@ class backtest():
 
             # Resolution of Open Shares 
             if current_order != None:
-                print("Outstanding shares: ", current_order.get_balance())
                 capital += current_order.get_balance()
                 current_order = None
                 if all_orders[0] == None:
