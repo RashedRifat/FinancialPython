@@ -1,0 +1,14 @@
+Summary of for [2021-02-05 22:25:49.502968 GMT]
+Results for: [AAPL]
+
+Summary of Trades for [AAPL]
+[----------------------------------------------------------------]
+Orders Made: 3
+P\L Ratio: 3/3 = 100.0%
+Profit Percent: 23.01%
+Profit: $115.03
+Max Profit: $58.95
+Max Drawdown: $0
+Ending Balance: $615.03
+[----------------------------------------------------------------]
+
